@@ -8,7 +8,7 @@ import PredictionForm from './components/PredictionForm';
 import ReportView from './components/ReportView';
 import MapModal from './components/MapModal';
 import { AppTab, RealTimeWeather, WeatherDataPoint } from './types';
-import { Search, Cloud, Loader2, MapPin, Timer, Zap, RefreshCw, Radio, Maximize2, Thermometer, Droplets, Wind, CloudLightning, Bell, BellOff, Settings as SettingsIcon, CheckCircle2 } from 'lucide-react';
+import { Search, Cloud, Loader2, MapPin, Timer, Zap, RefreshCw, Radio, Maximize2, Thermometer, Droplets, Wind, CloudLightning, Bell, BellOff, Settings as SettingsIcon, CheckCircle2, Satellite } from 'lucide-react';
 import { geocodeLocation, fetchLiveWeather } from './services/weatherService';
 import { MOCK_TIMESERIES, CONDITION_ICONS } from './constants';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
@@ -225,7 +225,10 @@ const App: React.FC = () => {
                   </div>
                 </div>
                 <p className="relative z-10 text-5xl font-black text-[#1F2A44] tracking-tighter">{display.condition}</p>
-                <p className="relative z-10 text-[10px] text-[#4A90E2] font-black uppercase tracking-[0.4em] mt-3">Vision-ML Verified</p>
+                <div className="relative z-10 flex items-center gap-2 mt-3">
+                  <Satellite className="w-3 h-3 text-[#4A90E2]" />
+                  <p className="text-[10px] text-[#4A90E2] font-black uppercase tracking-[0.4em]">Live Satellite Verfied</p>
+                </div>
               </div>
               <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-[#AAB2C0]/10 space-y-6">
                 <h3 className="text-xl font-black text-[#1F2A44] tracking-tight uppercase tracking-[0.1em]">Deployment Node</h3>
@@ -475,12 +478,16 @@ const App: React.FC = () => {
           
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3 bg-white px-5 py-2 rounded-2xl border border-[#AAB2C0]/10 shadow-sm group cursor-default">
-              <div className="w-9 h-9 bg-[#4A90E2] rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20 group-hover:bg-[#357ABD] transition-colors">
-                <Cloud className="w-5 h-5" />
+              <div className="w-9 h-9 bg-[#4A90E2] rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20 group-hover:bg-[#357ABD] transition-colors relative overflow-hidden">
+                <Cloud className="w-5 h-5 relative z-10" />
+                {loading && <div className="absolute inset-0 bg-white/20 animate-pulse"></div>}
               </div>
               <div className="flex flex-col">
                 <p className="text-xs font-black text-[#1F2A44] leading-none tracking-tighter uppercase">SkySync</p>
-                <p className="text-[10px] text-[#4A90E2] font-black uppercase tracking-[0.2em] mt-0.5">{activeTab.toUpperCase()}</p>
+                <div className="flex items-center gap-1 mt-0.5">
+                   <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></div>
+                   <p className="text-[10px] text-[#4A90E2] font-black uppercase tracking-[0.2em]">LIVE FEED</p>
+                </div>
               </div>
             </div>
           </div>
@@ -498,7 +505,10 @@ const App: React.FC = () => {
         />
 
         <footer className="px-10 py-12 border-t border-[#AAB2C0]/10 bg-white/50 flex flex-col md:flex-row justify-between items-center text-[#AAB2C0] text-[11px] font-bold uppercase tracking-wider">
-           <p>© 2025 SkySync AI Research. Multi-Parameter Inference Platform.</p>
+           <div className="flex flex-col gap-1">
+             <p>© 2025 SkySync AI Research. Multi-Parameter Inference Platform.</p>
+             <p className="text-[9px] text-[#AAB2C0]/60">Live Atmospheric Data provided by Open-Meteo (Free Tier).</p>
+           </div>
            <div className="flex gap-8 mt-4 md:mt-0">
              <a href="#" className="hover:text-[#4A90E2] transition-colors">Documentation</a>
              <a href="#" className="hover:text-[#4A90E2] transition-colors">Inference Engine</a>

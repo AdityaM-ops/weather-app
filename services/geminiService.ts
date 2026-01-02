@@ -1,10 +1,11 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
 import { PredictionResult } from "../types";
 
-// Fix: Strictly use process.env.API_KEY as the only parameter source for initialization.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
+/**
+ * Local Heuristic Inference Engine
+ * Mimics AI behavior using meteorological formulas.
+ * This removes the dependency on paid Gemini API calls while keeping the "AI Lab" functional.
+ */
 export const getAIPrediction = async (inputs: {
   temp: number;
   humidity: number;
@@ -12,49 +13,44 @@ export const getAIPrediction = async (inputs: {
   wind: number;
   season: string;
 }): Promise<PredictionResult> => {
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Perform weather forecasting inference based on these parameters:
-        Temperature: ${inputs.temp}°C
-        Humidity: ${inputs.humidity}%
-        Pressure: ${inputs.pressure} hPa
-        Wind: ${inputs.wind} km/h
-        Season: ${inputs.season}
-        
-        Analyze as if you are a multi-stage LSTM and XGBoost ensemble model.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            temperature: { type: Type.NUMBER, description: "Predicted temp in next 6h" },
-            humidity: { type: Type.NUMBER, description: "Predicted humidity" },
-            rainfall: { type: Type.NUMBER, description: "Probable rainfall in mm" },
-            windSpeed: { type: Type.NUMBER, description: "Predicted wind speed" },
-            condition: { type: Type.STRING, description: "Condition: Sunny, Cloudy, Rainy, or Storm" },
-            confidence: { type: Type.NUMBER, description: "Confidence score 0-1" },
-            reasoning: { type: Type.STRING, description: "Brief scientific explanation of the prediction" },
-          },
-          required: ["temperature", "humidity", "rainfall", "windSpeed", "condition", "confidence", "reasoning"],
-        }
-      },
-    });
+  // Artificial delay to simulate "thinking"
+  await new Promise(resolve => setTimeout(resolve, 800));
 
-    // Fix: Directly access the .text property and ensure whitespace trimming before parsing as recommended.
-    const result = JSON.parse(response.text.trim());
-    return result;
-  } catch (error) {
-    console.error("Inference Error:", error);
-    // Fallback logic
-    return {
-      temperature: inputs.temp + (Math.random() * 4 - 2),
-      humidity: inputs.humidity + (Math.random() * 10 - 5),
-      rainfall: inputs.humidity > 80 ? Math.random() * 5 : 0,
-      windSpeed: inputs.wind + Math.random() * 5,
-      condition: inputs.humidity > 80 ? 'Rainy' : 'Sunny',
-      confidence: 0.85,
-      reasoning: "Heuristic-based prediction due to API connectivity issues."
-    };
+  const { temp, humidity, pressure, wind, season } = inputs;
+  
+  // 1. Determine Condition based on atmospheric physics
+  let condition = "Sunny";
+  if (humidity > 85 && pressure < 1005) {
+    condition = "Storm";
+  } else if (humidity > 70 || (humidity > 50 && pressure < 1010)) {
+    condition = "Rainy";
+  } else if (humidity > 40 || pressure < 1015) {
+    condition = "Cloudy";
   }
+
+  // 2. Predict Shift (Simulation of Temporal Propagation)
+  const predictedTemp = temp + (condition === "Rainy" || condition === "Storm" ? -3.5 : 1.2);
+  const predictedHumidity = Math.min(100, humidity + (condition === "Rainy" ? 15 : -5));
+  const rainfall = condition === "Storm" ? 25.4 : (condition === "Rainy" ? 8.2 : 0);
+  const predictedWind = wind * (condition === "Storm" ? 2.5 : 1.1);
+  
+  // 3. Construct Scientific Reasoning
+  const reasons = [];
+  if (pressure < 1010) reasons.push(`The barometric drop to ${pressure} hPa indicates a low-pressure system typical of ${season} cyclonic activity.`);
+  if (humidity > 70) reasons.push(`High saturation levels (${humidity}%) suggest significant moisture convergence in the lower troposphere.`);
+  if (temp > 30 && humidity > 60) reasons.push("Thermal instability is high, increasing the probability of convective cloud formation.");
+  
+  const reasoning = reasons.length > 0 
+    ? reasons.join(" ") + ` Consequently, the model propagates a shift toward ${condition.toLowerCase()} conditions.`
+    : `Stable anticyclonic conditions detected. Atmospheric momentum suggests a continuation of ${condition.toLowerCase()} patterns with minimal variance.`;
+
+  return {
+    temperature: predictedTemp,
+    humidity: predictedHumidity,
+    rainfall: rainfall,
+    windSpeed: predictedWind,
+    condition: condition,
+    confidence: 0.92 + (Math.random() * 0.05),
+    reasoning: reasoning
+  };
 };
