@@ -8,7 +8,7 @@ import PredictionForm from './components/PredictionForm';
 import ReportView from './components/ReportView';
 import MapModal from './components/MapModal';
 import { AppTab, RealTimeWeather, WeatherDataPoint } from './types';
-import { Search, Cloud, Loader2, MapPin, Timer, Zap, RefreshCw, Radio, Maximize2, Thermometer, Droplets, Wind, CloudLightning, Bell, BellOff, Settings as SettingsIcon, CheckCircle2, Satellite, Globe, Target, MapPinned, Play, Pause, Power } from 'lucide-react';
+import { Search, Cloud, Loader2, MapPin, Timer, Zap, RefreshCw, Radio, Maximize2, Thermometer, Droplets, Wind, CloudLightning, Bell, BellOff, Settings as SettingsIcon, CheckCircle2, Satellite, Globe, Target, MapPinned, Play, Pause, Power, LocateFixed, Navigation } from 'lucide-react';
 import { geocodeLocation, fetchLiveWeather, fetchLocationName } from './services/weatherService';
 import { MOCK_TIMESERIES, CONDITION_ICONS } from './constants';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
@@ -55,9 +55,7 @@ const App: React.FC = () => {
     const handleSuccess = (data: RealTimeWeather, actualLat: number, actualLon: number) => {
       setLiveData(data);
       // Sync the currentLocation state so lat/lon labels update if they were null
-      if (!currentLocation || currentLocation.lat !== actualLat || currentLocation.lon !== actualLon) {
-        setCurrentLocation({ lat: actualLat, lon: actualLon, label: data.locationLabel });
-      }
+      setCurrentLocation({ lat: actualLat, lon: actualLon, label: data.locationLabel });
       setLoading(false);
     };
 
@@ -66,7 +64,7 @@ const App: React.FC = () => {
       setLoading(false);
     };
 
-    if (lat !== undefined && lon !== undefined) {
+    if (lat !== undefined && lon !== undefined && typeof lat === 'number' && typeof lon === 'number') {
       try {
         const data = await fetchLiveWeather(lat, lon, label);
         handleSuccess(data, lat, lon);
@@ -95,7 +93,7 @@ const App: React.FC = () => {
       },
       { timeout: 10000 }
     );
-  }, [liveData, currentLocation]);
+  }, [liveData]);
 
   useEffect(() => {
     if (!autoSync) {
@@ -213,8 +211,7 @@ const App: React.FC = () => {
           cx={25 + 18 * Math.cos(Math.PI + percent * Math.PI)} 
           cy={30 + 18 * Math.sin(Math.PI + percent * Math.PI)} 
           r="4" 
-          fill="white" 
-          stroke={colorCode} 
+          fill="white"  stroke={colorCode} 
           strokeWidth="2" 
           className="transition-all duration-1000 ease-out" 
         />
@@ -280,9 +277,19 @@ const App: React.FC = () => {
                      </div>
                    </div>
                 )}
-                <h3 className="text-xl font-black text-[#1F2A44] tracking-tight uppercase tracking-[0.1em] flex items-center gap-2">
-                   <Target className="w-5 h-5 text-blue-500" /> Deployment Node
-                </h3>
+                <div className="flex justify-between items-center">
+                  <h3 className="text-xl font-black text-[#1F2A44] tracking-tight uppercase tracking-[0.1em] flex items-center gap-2">
+                     <Target className="w-5 h-5 text-blue-500" /> Deployment Node
+                  </h3>
+                  {/* Fixed: Wrapped getLatestData in an arrow function to prevent the MouseEvent from being passed as 'lat' */}
+                  <button 
+                    onClick={() => { getLatestData(); }}
+                    className="flex items-center gap-2 px-4 py-2 bg-[#F5F7FA] hover:bg-blue-500 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm border border-[#AAB2C0]/10 group"
+                  >
+                    <LocateFixed className="w-3.5 h-3.5 group-hover:animate-pulse" />
+                    Reset to Local
+                  </button>
+                </div>
                 
                 <div className="p-8 bg-[#F5F7FA] rounded-3xl border border-[#AAB2C0]/10 relative transition-all duration-500 hover:border-blue-500/20">
                   <div className="absolute top-4 right-4 text-blue-500/10">
@@ -440,7 +447,8 @@ const App: React.FC = () => {
                 <p className="bg-white/50 p-6 rounded-2xl text-lg font-medium border border-red-500/10 italic">
                   "{error}"
                 </p>
-                <button onClick={getLatestData} className="w-max bg-[#E74C3C] text-white px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-red-600 transition-all">
+                {/* Fixed: Wrapped getLatestData in an arrow function to fix type error on line 717 */}
+                <button onClick={() => { getLatestData(); }} className="w-max bg-[#E74C3C] text-white px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-red-600 transition-all">
                   Attempt Re-Sync
                 </button>
               </div>
@@ -473,7 +481,7 @@ const App: React.FC = () => {
         return (
           <div className="space-y-10 animate-fadeIn">
             <div className="flex flex-col gap-2">
-              <h2 className="text-4xl font-black text-[#1F2A44] tracking-tight">System Configuration</h2>
+              <h2 className="text-4xl font-black text-[#1F2A44] tracking-tight">Inference Lab</h2>
               <p className="text-[#AAB2C0] font-medium text-lg">Adjustment of multi-stage inference parameters and sync protocols.</p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -617,7 +625,7 @@ const App: React.FC = () => {
         {activeTab === AppTab.ABOUT && (
           <footer className="px-10 py-12 border-t border-[#AAB2C0]/10 bg-white/50 flex flex-col md:flex-row justify-between items-center text-[#AAB2C0] text-[11px] font-bold uppercase tracking-wider">
             <div className="flex flex-col gap-1">
-              <p>© 2025 SkySync AI Research. Multi-Parameter Inference Platform.</p>
+              <p>© 2025 SkySync Research. Multi-Parameter Inference Platform.</p>
               <p className="text-[9px] text-[#AAB2C0]/60">Live Atmospheric Data provided by Open-Meteo (Free Tier).</p>
             </div>
             <div className="flex gap-8 mt-4 md:mt-0">

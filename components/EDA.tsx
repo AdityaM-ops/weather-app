@@ -114,8 +114,8 @@ const EDA: React.FC<EDAProps> = ({ data }) => {
                   cursor={{fill: '#F5F7FA', radius: [8, 8, 0, 0]}}
                   contentStyle={{borderRadius: '24px', border: 'none', boxShadow: '0 30px 60px -12px rgba(31,42,68,0.2)', padding: '16px'}} 
                 />
-                {/* We use a slightly visible minPointSize so even 0.0mm has a 'footprint' */}
-                <Bar dataKey="rainfall" fill="url(#precipGradient)" radius={[6, 6, 0, 0]} barSize={24} minPointSize={2} />
+                {/* Changed radius from array to number to fix 'number[]' vs 'string | number' type mismatch */}
+                <Bar dataKey="rainfall" fill="url(#precipGradient)" radius={6} barSize={24} minPointSize={2} />
               </BarChart>
             </ResponsiveContainer>
           </div>

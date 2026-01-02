@@ -28,7 +28,7 @@ const PredictionForm: React.FC = () => {
   return (
     <div className="space-y-10 animate-fadeIn">
       <div className="flex flex-col gap-2">
-        <h2 className="text-4xl font-black text-[#1F2A44] tracking-tight">Inference Laboratory</h2>
+        <h2 className="text-4xl font-black text-[#1F2A44] tracking-tight">Inference Lab</h2>
         <p className="text-[#AAB2C0] font-medium text-lg">Local Neural-Mimic simulation using deterministic atmospheric logic.</p>
       </div>
 

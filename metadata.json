@@ -1,5 +1,5 @@
 {
-  "name": "SkySync AI: Advanced Weather Prediction System",
+  "name": "SkySync: Advanced Weather Prediction System",
   "description": "A comprehensive end-to-end weather forecasting platform utilizing Baseline Regression, Random Forest, and LSTM Deep Learning models for multi-parameter prediction and EDA.",
   "requestFramePermissions": [
     "geolocation"

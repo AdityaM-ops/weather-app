@@ -10,7 +10,7 @@ export const NAV_ITEMS = [
   { id: AppTab.ANALYTICS, label: 'Analytics', icon: <BarChart3 className="w-5 h-5" /> },
   { id: AppTab.MAP, label: 'Map', icon: <MapIcon className="w-5 h-5" /> },
   { id: AppTab.ALERTS, label: 'Alerts', icon: <Bell className="w-5 h-5" /> },
-  { id: AppTab.SETTINGS, label: 'Settings', icon: <SettingsIcon className="w-5 h-5" /> },
+  { id: AppTab.SETTINGS, label: 'Inference Lab', icon: <SettingsIcon className="w-5 h-5" /> },
   { id: AppTab.ABOUT, label: 'About', icon: <Info className="w-5 h-5" /> },
 ];
 

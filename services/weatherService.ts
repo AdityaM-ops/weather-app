@@ -19,7 +19,7 @@ export const geocodeLocation = async (query: string): Promise<{ lat: number, lon
       {
         headers: {
           'Accept-Language': 'en',
-          'User-Agent': 'SkySync-AI-Weather-App'
+          'User-Agent': 'SkySync-Weather-App'
         }
       }
     );
@@ -49,7 +49,7 @@ export const fetchLocationName = async (lat: number, lon: number): Promise<strin
       {
         headers: {
           'Accept-Language': 'en',
-          'User-Agent': 'SkySync-AI-Weather-App'
+          'User-Agent': 'SkySync-Weather-App'
         }
       }
     );
