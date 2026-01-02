@@ -14,15 +14,19 @@ export const NAV_ITEMS = [
   { id: AppTab.ABOUT, label: 'About', icon: <Info className="w-5 h-5" /> },
 ];
 
-export const MOCK_TIMESERIES: WeatherDataPoint[] = Array.from({ length: 24 }).map((_, i) => ({
-  timestamp: `${i}:00`,
-  temperature: 22 + Math.sin(i / 3) * 5 + Math.random() * 2,
-  humidity: 60 + Math.cos(i / 4) * 15 + Math.random() * 5,
-  pressure: 1012 + Math.random() * 2,
-  windSpeed: 5 + Math.random() * 8,
-  rainfall: Math.random() > 0.8 ? Math.random() * 10 : 0,
-  condition: i > 18 || i < 6 ? 'Cloudy' : 'Sunny'
-}));
+export const MOCK_TIMESERIES: WeatherDataPoint[] = Array.from({ length: 24 }).map((_, i) => {
+  // Logic to create 'blocks' of rain rather than single random bars
+  const isRainyWindow = (i >= 14 && i <= 18); // Afternoon shower block
+  return {
+    timestamp: `${i}:00`,
+    temperature: 22 + Math.sin(i / 3) * 5 + Math.random() * 2,
+    humidity: 60 + Math.cos(i / 4) * 15 + Math.random() * 5,
+    pressure: 1012 + Math.random() * 2,
+    windSpeed: 5 + Math.random() * 8,
+    rainfall: isRainyWindow ? (Math.random() * 5 + 2) : (Math.random() > 0.9 ? Math.random() * 2 : 0),
+    condition: isRainyWindow ? 'Rainy' : (i > 18 || i < 6 ? 'Cloudy' : 'Sunny')
+  };
+});
 
 export const MODEL_STATS: ModelComparison[] = [
   {

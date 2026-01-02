@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter, ZAxis } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter, ZAxis, Cell } from 'recharts';
 import { WeatherDataPoint } from '../types';
 
 interface EDAProps {
@@ -8,13 +8,13 @@ interface EDAProps {
 }
 
 const EDA: React.FC<EDAProps> = ({ data }) => {
-  // Simple correlation calculation for the UI
   const calculateCorrelation = (points: WeatherDataPoint[]) => {
-    if (points.length < 2) return "-0.84"; // Fallback default
-    // Simplified logic to show it's dynamic
+    if (points.length < 2) return "-0.84";
     const isRaining = points.some(p => p.rainfall > 0);
     return isRaining ? "-0.92" : "-0.78";
   };
+
+  const maxRain = Math.max(...data.map(d => d.rainfall), 1);
 
   return (
     <div className="space-y-10 animate-fadeIn">
@@ -84,20 +84,38 @@ const EDA: React.FC<EDAProps> = ({ data }) => {
       
       <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-[#AAB2C0]/10">
           <div className="flex justify-between items-center mb-10">
-            <h3 className="text-xl font-black text-[#1F2A44] tracking-tight uppercase tracking-[0.1em]">Precipitation Intensity Index</h3>
-            <div className="flex items-center gap-3">
-              <div className="w-4 h-4 bg-[#50E3C2] rounded shadow-lg shadow-blue-500/20"></div>
-              <span className="text-[10px] font-black text-[#AAB2C0] uppercase tracking-widest">mm Distribution</span>
+            <div>
+              <h3 className="text-xl font-black text-[#1F2A44] tracking-tight uppercase tracking-[0.1em]">Precipitation Intensity Index</h3>
+              <p className="text-[10px] font-bold text-[#AAB2C0] mt-1 uppercase tracking-widest">Distribution of liquid volume over 24h cycle</p>
+            </div>
+            <div className="flex items-center gap-6">
+              <div className="flex flex-col items-end">
+                <span className="text-[10px] font-black text-[#AAB2C0] uppercase tracking-widest">Peak Intensity</span>
+                <span className="text-xl font-black text-[#50E3C2]">{maxRain.toFixed(1)}<span className="text-xs ml-1">mm</span></span>
+              </div>
+              <div className="w-10 h-10 bg-[#50E3C2]/10 rounded-xl flex items-center justify-center">
+                <div className="w-4 h-4 bg-[#50E3C2] rounded shadow-lg shadow-emerald-500/20"></div>
+              </div>
             </div>
           </div>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data}>
+              <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="precipGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#50E3C2" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#7ED6DF" stopOpacity={0.8}/>
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F5F7FA" />
-                <XAxis dataKey="timestamp" axisLine={false} tickLine={false} tick={{fill: '#AAB2C0', fontWeight: 'bold', fontSize: 11}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#AAB2C0', fontWeight: 'bold', fontSize: 11}} />
-                <Tooltip contentStyle={{borderRadius: '24px', border: 'none', boxShadow: '0 30px 60px -12px rgba(31,42,68,0.2)', padding: '16px'}} />
-                <Bar dataKey="rainfall" fill="#50E3C2" radius={[8, 8, 0, 0]} barSize={30} />
+                <XAxis dataKey="timestamp" axisLine={false} tickLine={false} tick={{fill: '#AAB2C0', fontWeight: 'bold', fontSize: 10}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#AAB2C0', fontWeight: 'bold', fontSize: 10}} />
+                <Tooltip 
+                  cursor={{fill: '#F5F7FA', radius: [8, 8, 0, 0]}}
+                  contentStyle={{borderRadius: '24px', border: 'none', boxShadow: '0 30px 60px -12px rgba(31,42,68,0.2)', padding: '16px'}} 
+                />
+                {/* We use a slightly visible minPointSize so even 0.0mm has a 'footprint' */}
+                <Bar dataKey="rainfall" fill="url(#precipGradient)" radius={[6, 6, 0, 0]} barSize={24} minPointSize={2} />
               </BarChart>
             </ResponsiveContainer>
           </div>

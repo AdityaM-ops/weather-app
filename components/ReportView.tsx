@@ -14,7 +14,7 @@ const ReportView: React.FC = () => {
     <div className="max-w-4xl mx-auto py-8 space-y-12 animate-fadeIn">
       <div className="text-center space-y-4 mb-16">
         <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Weather Intelligence Research</h1>
-        <p className="text-slate-500 uppercase tracking-widest text-sm font-bold">Visual Computing Internship Capstone Project</p>
+        <p className="text-slate-500 uppercase tracking-widest text-sm font-bold">Minor Project Submission</p>
         <div className="h-1 w-24 bg-blue-600 mx-auto rounded-full"></div>
       </div>
 
@@ -68,7 +68,7 @@ const ReportView: React.FC = () => {
       <div className="p-6 bg-slate-900 rounded-2xl text-white flex items-center justify-between">
         <div>
           <p className="font-bold">Authors: Aditya and Shreeya</p>
-          <p className="text-xs text-slate-400">Visual Computing Internship Final Submission</p>
+          <p className="text-xs text-slate-400">Minor Project Submission</p>
         </div>
         <button className="px-6 py-2 bg-blue-600 rounded-lg font-bold text-sm hover:bg-blue-700 transition-colors">Download PDF</button>
       </div>

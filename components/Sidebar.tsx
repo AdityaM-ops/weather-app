@@ -34,11 +34,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
           </button>
         ))}
       </nav>
-
-      <div className="p-8 border-t border-white/5 text-[10px] text-[#AAB2C0] font-medium tracking-wide">
-        <p>© 2025 SkySync Research</p>
-        <p className="mt-1 opacity-60">Build v1.4.2-LSTM</p>
-      </div>
     </aside>
   );
 };

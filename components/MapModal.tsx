@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
-import { X, MapPin, Check, Crosshair, Loader2, Search, Target } from 'lucide-react';
+import { X, MapPin, Check, Crosshair, Loader2, Search, Target, LocateFixed } from 'lucide-react';
 import { geocodeLocation } from '../services/weatherService';
 
 interface MapModalProps {
@@ -29,10 +29,16 @@ const MapModal: React.FC<MapModalProps> = ({ isOpen, onClose, onSelect, initialP
   const [mapSearch, setMapSearch] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
+  // Sync internal selectedPos with initialPos when opening
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedPos(initialPos);
+    }
+  }, [isOpen, initialPos]);
+
   // Initialize Map
   useEffect(() => {
     if (isOpen && mapContainerRef.current && !mapRef.current) {
-      // Standard OSM visual style (vibrant)
       mapRef.current = L.map(mapContainerRef.current, {
         zoomControl: false,
       }).setView([initialPos.lat, initialPos.lon], initialPos.lat === 20 && initialPos.lon === 0 ? 2 : 12);
@@ -58,11 +64,6 @@ const MapModal: React.FC<MapModalProps> = ({ isOpen, onClose, onSelect, initialP
         const position = marker.getLatLng();
         updatePosition(position.lat, position.lng, false);
       });
-
-      // Auto-detect if opening on default coordinates
-      if (initialPos.lat === 20 && initialPos.lon === 0) {
-        handleLocateMe();
-      }
     }
 
     return () => {
@@ -187,7 +188,5 @@ const MapModal: React.FC<MapModalProps> = ({ isOpen, onClose, onSelect, initialP
     </div>
   );
 };
-
-import { LocateFixed } from 'lucide-react';
 
 export default MapModal;
